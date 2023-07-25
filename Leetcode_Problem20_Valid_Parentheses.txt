@@ -1,0 +1,57 @@
+typedef struct stack
+{
+    char character;
+    struct stack *next;
+} stack;
+
+stack* push(stack* top,char data)
+{
+    stack *node = (stack *)malloc(sizeof(stack));
+    node->character = data;
+    node->next = top;
+    top = node;
+    return top;
+}
+
+stack* pop(stack* top,char *data)
+{
+    if (top != NULL)
+    {
+        stack *temp = top;
+        *data = temp->character;
+        top = top->next;
+        free(temp);
+    }
+    else
+        return NULL;
+    return top;
+}
+
+int match(char a, char b)
+{
+    if ((a == '(' && b == ')') || (a == '[' && b == ']') || (a == '{' && b == '}'))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+bool isValid(char *s)
+{
+    stack *top = NULL;
+    char pop_ch;
+    for (int i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] == '(' || s[i] == '{' || s[i] == '[')
+            top = push(top,s[i]);
+        else if (s[i] == ')' || s[i] == '}' || s[i] == ']')
+        {
+            if (top == NULL)
+                return 0;
+            top = pop(top,&pop_ch);
+            if (!match(pop_ch, s[i]))
+                return 0;
+        }
+    }
+    return (top == NULL);
+}
